@@ -43,22 +43,33 @@ public class BasketController {
         List<BasketItem> items = basketService.getBasket(userId);
         return ResponseEntity.ok(items);
     }
-
     @PostMapping("/add")
-    public ResponseEntity<?> addToBasket(@RequestParam Long userId,
-                                          @RequestParam Long productId,
-                                          @RequestParam int quantity,
-                                          Principal principal) {
-        // IDOR check
-        Optional<User> loggedInUser = userRepository.findByEmail(principal.getName());
-        if (loggedInUser.isEmpty() || !loggedInUser.get().getId().equals(userId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("Access denied!");
-        }
-
-        String result = basketService.addToBasket(userId, productId, quantity);
-        return ResponseEntity.ok(result);
+public ResponseEntity<?> addToBasket(@RequestParam Long userId,
+                                      @RequestParam Long productId,
+                                      @RequestParam int quantity,
+                                      Principal principal) {
+    // IDOR check
+    Optional<User> loggedInUser = userRepository.findByEmail(principal.getName());
+    if (loggedInUser.isEmpty() || !loggedInUser.get().getId().equals(userId)) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("Access denied!");
     }
+
+    // Negative quantity check
+    if (quantity <= 0) {
+        return ResponseEntity.badRequest()
+                .body("Quantity must be a positive number!");
+    }
+
+    // Maximum quantity check
+    if (quantity > 100) {
+        return ResponseEntity.badRequest()
+                .body("Quantity cannot exceed 100!");
+    }
+
+    String result = basketService.addToBasket(userId, productId, quantity);
+    return ResponseEntity.ok(result);
+}
 
     @DeleteMapping("/remove/{itemId}")
     public ResponseEntity<?> removeFromBasket(@PathVariable Long itemId,

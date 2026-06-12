@@ -19,7 +19,8 @@ public class ProductController {
     
     @GetMapping("/search")
     public List<Product> searchProducts(@RequestParam String name){
-        return productService.searchProducts(name);
+        String sanitized = name.replaceAll("<[^>]*>", "");
+        return productService.searchProducts(sanitized);
     }
 
     @PostMapping("/add")

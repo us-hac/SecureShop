@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { sanitize } from "../sanitize";
 import api from "../axiosConfig";
 
 function AdminDashboard() {
@@ -66,13 +67,13 @@ function AdminDashboard() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <div>
                   <p style={{ fontWeight: "600", marginBottom: "4px" }}>
-                    ✉️ {feedback.email}
+                    ✉️ {sanitize(feedback.email)}
                   </p>
                   <p style={{ color: "#6e6e73", fontSize: "13px", marginBottom: "10px" }}>
                     User ID: {feedback.userId}
                   </p>
                   <p style={{ fontSize: "15px", lineHeight: "1.5" }}>
-                    {feedback.message}
+                    {sanitize(feedback.message)}
                   </p>
                 </div>
                 <button
